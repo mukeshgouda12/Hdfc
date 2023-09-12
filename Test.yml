@@ -1,0 +1,27 @@
+---
+- hosts: 192.168.30.101
+  remote_user: root
+  tasks:
+  - name: Create Repo-Directory
+    file:
+     path: "/root/{{ Directory_Name }}"
+     state: directory
+  - name: clone the repo
+    ansible.builtin.git:
+     repo: "{{ URL }}"
+     dest: "/root/{{ Directory_Name }}"
+  - name: Create MANIFEST.in file
+    blockinfile:
+     path: "/root/{{ Directory_Name }}/MANIFEST.in"
+     create: true
+     block: |
+      "{{ Content }}"
+  - shell:
+     chdir: "/root/{{ Directory_Name }}"
+     cmd: git add .
+  - shell:
+     chdir: "/root/{{ Directory_Name }}"
+     cmd: git commit -m "Project Signing done"
+  - shell: 
+     cmd: git push     
+     chdir: "/root/{{ Directory_Name }}"
